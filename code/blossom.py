@@ -5,7 +5,7 @@ def Blossom(graph,num):
     #输入:顶点个数为num的完全图graph,以邻接矩阵形式给出,顶点标号从1~num
 
     INF = sys.maxsize
-    MAXN = int(num*(num-1)+1)
+    MAXN = num+1
     
     class Edge:
         def __init__(self, u=0, v=0, w=0):
@@ -139,7 +139,8 @@ def Blossom(graph,num):
             xs = flower[b][i]
             for x in range(1, n_x + 1):
                 if not g[b][x].w or e_delta(g[xs][x]) < e_delta(g[b][x]):
-                    g[b][x] = g[x][b] = g[x][xs]
+                    g[b][x] = g[xs][x]
+                    g[x][b] = g[x][xs]
             for x in range(1, n + 1):
                 if flower_from[xs][x]:  #不等于0就代表xs包含x
                     flower_from[b][x] = xs
@@ -263,7 +264,7 @@ def Blossom(graph,num):
 
 
     #下面是主函数
-    match = [0] * (n + 1)
+    match = [0] * (2 * MAXN + 1)
     n_x = n  # 一开始没有花
     n_matches = 0
     tot_weight = 0
