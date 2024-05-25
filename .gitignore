@@ -1,6 +1,7 @@
 code/data/input/*
 code/data/output/*
 
+!code/data/input/README.md
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
