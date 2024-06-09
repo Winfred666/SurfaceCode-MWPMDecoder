@@ -34,6 +34,11 @@
 \usepackage{subcaption} % 子图
 \usepackage{amsmath}
 \usepackage{tcolorbox}
+
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{adjustbox}
+
  % A shortened article title to appear in the running head, leave this command empty for no running head
 \linespread{2}
 \footertext{\textit{Class Article of "Basis of Quantum Information"} (2024- 06-10)} % Text to appear in the footer, leave this command empty for no footer text
@@ -54,11 +59,15 @@
     bottom=5pt, % 底部边距
     #1 % 允许自定义参数
 }
+
+\renewcommand{\baselinestretch}{1.2} % Adjust the line spacing
+
+
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
 %----------------------------------------------------------------------------------------
 
-\title{An Article Title That Spans Multiple\\ Lines to Show Line Wrapping} % Article title, use manual lines breaks (\\) to beautify the layout
+\title{MWPM Decoder} % Article title, use manual lines breaks (\\) to beautify the layout
 
 % Authors are listed in a comma-separated list with superscript numbers indicating affiliations
 % \thanks{} is used for any text that should be placed in a footnote on the first page, such as the corresponding author's email, journal acceptance dates, a copyright/license notice, keywords, etc
@@ -67,12 +76,17 @@
 }
 
 % Affiliations are output in the \date{} command
-\date{\footnotesize\ School of physics, ZheJiang University \\ School of computer science and technology , ZheJiang University \\  School of computer science and technology, ZheJiang University \\  School of physics,ZheJiang University}
+\date{\footnotesize \textit{CKC College Zhejiang University，Hangzhou 310058} \\ Dated: June 9th, 2024}
 
 % Full-width abstract
 \renewcommand{\maketitlehookd}{%
 	\begin{abstract}
-		\noindent Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent porttitor arcu luctus, imperdiet urna iaculis, mattis eros. Pellentesque iaculis odio vel nisl ullamcorper, nec faucibus ipsum molestie. Sed dictum nisl non aliquet porttitor. Etiam vulputate arcu dignissim, finibus sem et, viverra nisl. Aenean luctus congue massa, ut laoreet metus ornare in. Nunc fermentum nisi imperdiet lectus tincidunt vestibulum at ac elit. Nulla mattis nisl eu malesuada suscipit. Aliquam arcu turpis, ultrices sed luctus ac, vehicula id metus. Morbi eu feugiat velit, et tempus augue. Proin ac mattis tortor. Donec tincidunt, ante rhoncus luctus semper, arcu lorem lobortis justo, nec convallis ante quam quis lectus. Aenean tincidunt sodales massa, et hendrerit tellus mattis ac. Sed non pretium nibh. Donec cursus maximus luctus. Vivamus lobortis eros et massa porta porttitor.
+		\noindent In the field of quantum informatics, the Minimum Weight Perfect Matching (MWPM) decoder stands as a pivotal error-correction technique within surface code frameworks.\
+         This paper do a coarse research on the implementation and evaluation of the MWPM surface code decoder through two principal algorithms: the Blossom V algorithm and a localized Dijkstra algorithm. \ 
+         We rigorously test their error thresholds and time complexities, and further compare their performance against a contemporary MWPM decoder library, PyMatching 2.0. \
+         Furthermore, we extend our study to juxtapose the MWPM decoder's performance with other kinds of surface code decoders, specifically the cellular automaton decoder. \
+         Hopefully, this paper will provide an introduction to the MWPM decoder for future students who do the similar project .\
+         For more information, please visit our official GitHub repository at \url{https://github.com/Winfred666/SurfaceCode-MWPMDecoder.git}.
 	\end{abstract}
 }
 
@@ -187,14 +201,16 @@ As show in Figure 2(a)-(d),when a series of errors happen and we detect this err
 \section{\Rmnum{3}. Blossom Algorithm}
 	Here,we implement a decoder algorithm called Blossom Algorithm,which is first proposed by Edmonds in 1965.Edmond's idea requires $O(n^2m)$ times,where n is the number of nodes in the graph and m is the number of edges.The Blossom Algorithm has been developed with the time and different improvement has been conducted.It is impossible for us to cover all the creative ideas.Before we discuss the kind of minimum weight matching Blossom Algorithm,we first get an insight of the oldest Blossom Algorithm.
 \begin{enumerate}
-	\item \textbf{Graph Representation}:First,you should represent the problem as a graph $G=(V,E)$,where V is the set of vertices and E is set of edges with associated weights,as show in Figure 3where each yellow ball represents the vertices and the segment represents the edge which has different weight.
-	\begin{figure} % Single column figure
-	\setlength{\abovecaptionskip}{0.cm} %调整标题上方的距离   
-	\setlength{\abovecaptionskip}{0.cm} 
-	\includegraphics[width=\linewidth]{img/blossom algorithm 1.png}
-	\caption{An illustration of the graph.The balls represent the vertices and some are matched with each other and some are free.}
-	\label{fig:tcanther}
-	\end{figure}
+	%  needless to illustrate how the graph is composed.
+    % \item \textbf{Graph Representation}:First,you should represent the problem as a graph $G=(V,E)$,where V is the set of vertices and E is set of edges with associated weights,as show in Figure 3where each yellow ball represents the vertices and the segment represents the edge which has different weight.
+	% \begin{figure} % Single column figure
+	% \setlength{\abovecaptionskip}{0.cm} %调整标题上方的距离   
+	% \setlength{\abovecaptionskip}{0.cm} 
+	% \includegraphics[width=\linewidth]{img/blossom algorithm 1.png}
+	% \caption{An illustration of the graph.The balls represent the vertices and some are matched with each other and some are free.}
+	% \label{fig:tcanther}
+	% \end{figure}
+
 	\item \textbf{Augmenting Paths}:And then,an augmenting path is required.Like branches on a tree,an augmenting path is a path that stars and ends at unmatched vertices and alternate between unmatched and matched edges,as show in Figure 3(b).It can improve the size of the current matching by switching the matched and unmatched edges,as show in Figure 3(c).And the process of matching can repeatedly until no free vertices are left,at which point,we know the matching is maximum,as show in figure 3(d). 
 	\begin{figure}[htbp] % Single column figure 
     \centering %使图片居中显示
@@ -289,8 +305,25 @@ In Figure 7,we demonstrate the whole process of this algorithm in detail.It cons
 \end{enumerate}
 	the $u^-$ represents odd vertex in an alternating tree,the $u^+$ represents the even vertex in an alternating tree and $u^{\emptyset}$ represents an vertex not in any alternating tree.
 \section{\Rmnum{4}. Cellular Automation Decoder}
+
+
+
 Besides the Blossom Algorithm,we also get an insight of another decoder,the Cellular Automation Decoder.
+
+
+
+
+
 \section{\Rmnum{5}. Test and result}
+
+There is two critical parameter to evaluate the performance of a decoder:the error threshold and the time complexity.
+
+However, One pitfall about test set of surface code is the usage of noisy model.
+Though depolarizing noise model is the best one to simulate the real condition, 
+most of the test program just generate only bit-flip errors to test the decoder.
+So in \ref{fig:errorate2} we translate osur physical error rate
+to the unit of commonly used one.
+
 \begin{figure}[htbp] % Single column figure 
     \centering %使图片居中显示
     \vspace{0cm} %调整图片与上文的垂直距离  
@@ -300,34 +333,40 @@ Besides the Blossom Algorithm,we also get an insight of another decoder,the Cell
 	\begin{subfigure}[b]{0.9\linewidth}
         \includegraphics[width=\linewidth]{img/errorThres.png}
         \caption{}
-        \label{fig:subfig1}
+        \label{fig:errorrate1}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.9\linewidth}
         \includegraphics[width=\linewidth]{img/errorThres2.png}
         \caption{}
-        \label{fig:subfig2}
+        \label{fig:errorate2}
     \end{subfigure}
     \caption{}
     \end{figure}
 	In this part,we will show our results and compare different decoders with their error threshold and time complexity .You can see more details in our github website,here,we just give a brief introduction.
 	The error threshold is a critical parameter in the design and implementation of fault-tolerant quantum computation.It is related to the threshold theorem,which states that arbitrarily long quantum computations are reliable below a specific error rate that varies with the quantum decoders we use.Above the specific error rate,the reliability of the quantum computation rapidly deteriorates,making it impossible to conduct a fault-tolerant quantum computation.
 	Figure 8 (a)-(b) shows the logical error rate varying with the phase-flip and bit-flip error rate under the noise model respectively.For four different scale quantum memories, we set up 25 different groups of error rates,each group of error rates for 500 simulation tests, and calculate the logic error rate.We can calculate the error threshold by recording the intersection of four lines.And it shows the error threshold is about 0.104.As the time complexity ,shown in the Figure 9 (a)-(b) and table 1,the minimum weight perfect matching has the $O(n^3)$ time complexity.And the other,the Union Code represented by the previous group,has the $O(n)$ time complexity.Though,the minimum weight perfect matching is inferior in time complexity to previous work,it has an advantage over it by its higher error threshold.
+\begin{table}[h]
+    \caption{Time complexity of different decoders\\(N is physical qubit number)}
+    \centering
+    \begin{adjustbox}{max width=\columnwidth}
+    \begin{tabular}{>{\raggedright\arraybackslash}p{0.6\columnwidth} >{\raggedright\arraybackslash}p{0.4\columnwidth}}
+        \toprule
+        Decoder & Time Complexity \\
+        \midrule
+        MWPM(original) & $O(n^3logn)$ \\
+        MWPM(M-local-dijkstra) & $O(n^2Mlogn)$ \\
+        MWPM(sparse blossom) & $O(n)$ \\
+        Cellular Automaton & $O(n^2)$ \\
+        Union Find & $O(n)$ \\
+        \bottomrule
+    \end{tabular}
+    \end{adjustbox}
+\end{table}
+
 %------------------------------------------------
 \section{\Rmnum{6}. Conclusion}
-\begin{table} % Full width table (notice the starred environment)
-	\caption{Time complexity of different decoders}
-	\centering % Horizontally center the table
-	\begin{tabular}{L{1\linewidth} L{1\linewidth} R{0.15\linewidth}} % Manually specify column alignments with L{}, R{} or C{} and widths as a fixed amount, usually as a proportion of \linewidth
-		\toprule
-		\cmidrule(r){1-2}
-		Decoder & time complexity \\
-		\midrule
-		minimum weight perfect matching & $O(n^3)$ \\
-		Union codes & $O(n)$\\
-		\bottomrule
-	\end{tabular}
-\end{table}
+
 %----------------------------------------------------------------------------------------
 %	 REFERENCES
 %----------------------------------------------------------------------------------------
