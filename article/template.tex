@@ -28,6 +28,7 @@
 
 \usepackage[utf8]{inputenc}
  % BibLaTeX bibliography file
+\usepackage{biblatex}
 \usepackage{etoolbox}
 \addbibresource{reference.bib}
 \usepackage{adjustbox}
@@ -63,16 +64,16 @@
 %   TITLE SECTION
 %----------------------------------------------------------------------------------------
 
-\title{A Comparative Analysis of the MWPM Surface Codes} % Article title, use manual lines breaks (\\) to beautify the layout
+\title{A Comparative Analysis of the Blossom Algorithm for Surface Codes} % Article title, use manual lines breaks (\\) to beautify the layout
 
 % Authors are listed in a comma-separated list with superscript numbers indicating affiliations
 % \thanks{} is used for any text that should be placed in a footnote on the first page, such as the corresponding author's email, journal acceptance dates, a copyright/license notice, keywords, etc
 \author{
-    Zicheng Yang$^1$, Yuheng Ma$^2$, Yiming Xiao$^3$, Zikang Lv$^4$
+    Zicheng Yang$^1$, Yuheng Ma$^1$, Yiming Xiao$^1$, Zikang Lv$^1$
 }
 
 % Affiliations are output in the \date{} command
-\date{\footnotesize\ $^1$School of physics, ZheJiang University \\ $^2$School of computer science and technology, ZheJiang University \\  $^3$School of computer science and technology, ZheJiang University \\  $^4$School of physics, ZheJiang University \\ (\today)}
+\date{\footnotesize\ $^1$School of physics, ZheJiang University \\ $^1$School of computer science and technology, ZheJiang University \\  $^1$School of computer science and technology, ZheJiang University \\  $^1$School of physics, ZheJiang University \\ (\today)}
 
 % Full-width abstract
 \renewcommand{\maketitlehookd}{%
@@ -155,7 +156,7 @@ Phase-slip error:$\vert \psi \rangle \rightarrow \hat{Z} \vert \psi \rangle$
 The X error and the Y error are the fundamental mode of quantum error and they can appear at the same time, which we call Y error. In this paper, we assume that each error has the same probability $p/3$ to occur(in the code we implement ,the p is 0.15).
 \begin{figure}[htbp] % Single column figure 
     \centering  %使图片居中显示
-    \vspace{-0.8cm}   %调整图片与上文的垂直距离  
+    \vspace{0cm}   %调整图片与上文的垂直距离  
     \setlength{\abovecaptionskip}{0.cm} %调整标题上方的距离   
     \setlength{\abovecaptionskip}{0.cm} %调整标题下方的距离     
     \setlength{\belowdisplayskip}{3pt}  
@@ -187,25 +188,22 @@ The X error and the Y error are the fundamental mode of quantum error and they c
     \vspace{-0.4cm}
 \end{figure}
 \subsection{C. Decoder}
-As shown in Figure 2(a)-(d), when a series of errors happen and we detect this error by the measurement and collect all the syndromes. The task of decoder is to restore the most possible error. The green line ,red line and blue line in Figure 2(a) indicate the X error ,Z error and Y error. It is showed in the figure 2(b) that we detect these error with the measurement we mention above. The next step and the most challenging part is to match the syndromes and decode them to get result. We definitely hope what we get is trivial, but sometimes the logical error or the non-trivial result is inevitable due to the limitation of decoder algorithm \cite{9}. In the next section, we will introduce the Blossom Algorithm and test its logical error rate and compare it with other decoder algorithm.
+As shown in Figure 2(a)-(d), when a series of errors happen and we detect this error by the measurement and collect all the syndromes. The task of decoder is to restore the most possible error. The green line ,red line and blue line in Figure 2(a) indicate the X error ,Z error and Y error. It is shown in the figure 2(b) that we detect these error with the measurement we mention above. The next step and the most challenging part is to match the syndromes and decode them to get result. We definitely hope what we get is trivial, but sometimes the logical error or the non-trivial result is inevitable due to the limitation of decoder algorithm \cite{9}. In the next section, we will introduce the Blossom Algorithm and test its logical error rate and compare it with other decoder algorithm.
 
 %------------------------------------------------
 
 \section{\Rmnum{3}. Blossom Algorithm}
-
-The Blossom algorithm is the core of MWPM, and the step of building the syndrome graph from lattice using local dijkstra, and the way to recover path after matching the two defects, are ignored here. Interested readers can refer to the original PyMatching1.0 paper for more details.
-Here,we implement this algorithm,which is first proposed by Edmonds in 1965.Edmond's idea requires $O(n^2m)$ times,where n is the number of nodes in the graph and m is the number of edges.The Blossom Algorithm has been developed with the time and different improvement has been conducted.It is impossible for us to cover all the creative ideas.Before we discuss the kind of minimum weight matching Blossom Algorithm,we first get an insight of the oldest Blossom Algorithm.
-
+    Here, we implement a decoder algorithm called Blossom Algorithm, which is first proposed by Edmonds in 1965. Edmond's idea requires $O(n^2m)$ times, where n is the number of nodes in the graph and m is the number of edges \cite{10}. The Blossom Algorithm has been developed with the time and different improvements have been conducted. It is impossible for us to cover all the creative ideas. Before we discuss the kind of minimum weight matching Blossom Algorithm, we first get an insight of the oldest Blossom Algorithm.
 \begin{enumerate}
-    % \item \textbf{Graph Representation}: First, you should represent the problem as a graph $G=(V,E)$, where V is the set of vertices and E is set of edges with associated weights, as shown in Figure 3 where each yellow ball represents the vertices and the segment represents the edge which has different weight.
-    % \begin{figure} % Single column figure
-    % \setlength{\abovecaptionskip}{0.cm} %调整标题上方的距离   
-    % \setlength{\abovecaptionskip}{0.cm} 
-    % \includegraphics[width=\linewidth]{img/blossom algorithm 1.png}
-    % \caption{An illustration of the graph. The balls represent the vertices and some are matched with each other and some are free}
-    % \label{fig:tcanther}
-    % \end{figure}
-    \item \textbf{Augmenting Paths}: And then, an augmenting path is required. Like branches on a tree, an augmenting path is an alternating sequence of matched and unmatched edges, where the first and the last vertex is exposed, as shown in Figure 4(a). It can improve the size of the current matching by switching the matched and unmatched edges, as shown in Figure 4(b). And the process of matching can repeat until no free vertices are left, at which point, we know the matching is maximum, as shown in Figure 4(c). We can prove that: 
+    %\item \textbf{Graph Representation}: First, you should represent the problem as a graph $G=(V,E)$, where V is the set of vertices and E is set of edges with associated weights, as shown in Figure 3 where each yellow ball represents the vertices and the segment represents the edge which has different weight.
+    %\begin{figure} % Single column figure
+    %\setlength{\abovecaptionskip}{0.cm} %调整标题上方的距离   
+    %\setlength{\abovecaptionskip}{0.cm} 
+    %\includegraphics[width=\linewidth]{img/blossom algorithm 1.png}
+    %\caption{An illustration of the graph. The balls represent the vertices and some are matched with each other and some are free}
+    %\label{fig:tcanther}
+    %\end{figure}
+    \item \textbf{Augmenting Paths}: And then, an augmenting path is required. Like branches on a tree, an augmenting path is an alternating sequence of matched and unmatched edges, where the first and the last vertex are exposed, as shown in Figure 3(a). It can improve the size of the current matching by switching the matched and unmatched edges, as shown in Figure 3(b). And the process of matching can repeat until no free vertices are left, at which point, we know the matching is maximum, as shown in Figure 3(c). We can prove that: 
     \begin{center}
         contains an augmenting path $\leftrightarrow $ matching is not maximum
     \end{center}
@@ -247,8 +245,8 @@ Here,we implement this algorithm,which is first proposed by Edmonds in 1965.Edmo
     \caption{the basic concepts of blossom algorithm}
     \label{fig:threefigs}
 \end{figure}
-    \item \textbf{Blossoms}: But things don't always go well. When there is a blossom, a cycle containing an odd number of “pseudo nodes”, where a pseudo node is either a vertex or another blossom, the algorithm fails, as shown in Figure 4(d) and 3(e). We can see that since the augmenting path is longer than the shortest path, it is not found.
-    \item \textbf{Blossom Contraction and Expansion}: In this case, When an odd-length cycle (blossom) is detected, we should contract it into a single vertex, simplifying the problem and after finding a matching, expand the blossoms back to update the matching accordingly. The Figure 5(a)-(d) show the solution when a blossom is detected step by step.
+    \item \textbf{Blossoms}: But things don't always go well. When there is a blossom, a cycle containing an odd number of “pseudo nodes”, where a pseudo node is either a vertex or another blossom, the algorithm fails, as shown in Figure 3(d) and 3(e). We can see that since the augmenting path is longer than the shortest path, it is not found.
+    \item \textbf{Blossom Contraction and Expansion}: In this case, When an odd-length cycle (blossom) is detected, we should contract it into a single vertex, simplifying the problem and after finding a matching, expand the blossoms back to update the matching accordingly. The Figure 4(a)-(d) show the solution when a blossom is detected step by step.
     \begin{figure}[htbp] % Single column figure 
     \centering  %使图片居中显示
     \vspace{0cm}   %调整图片与上文的垂直距离  
@@ -280,7 +278,7 @@ Here,we implement this algorithm,which is first proposed by Edmonds in 1965.Edmo
     \end{subfigure}
     \caption{the contraction and expansion of blossoms. (a)-(d) shows the different step respectively}
 \end{figure}
-    \item \textbf{Iterative Process}: Finally, repeat the search for augmenting paths, contraction, and expansion until no more augmenting paths can be found. The whole process and code is presented in Figure 6.
+    \item \textbf{Iterative Process}: Finally, repeat the search for augmenting paths, contraction, and expansion until no more augmenting paths can be found. The whole process and code are presented in Figure 5.
 \begin{figure} % Single column figure
     \setlength{\abovecaptionskip}{0.cm} %调整标题上方的距离   
     \setlength{\abovecaptionskip}{0.cm} 
@@ -289,9 +287,10 @@ Here,we implement this algorithm,which is first proposed by Edmonds in 1965.Edmo
 \end{figure}
 \end{enumerate} 
 The minimum weight perfect matching algorithm is originated from the initial idea,
-but it has some improvement to handle with the practical problems, because there are \emph{weight} in our syndrome graph!
+but it has some improvement to handle with the practical problems, because there is \emph{weight} in our syndrome graph!
 Thus, we need a more complicated derived algorithm to solve our problem: Blossom V.
 The implementation of the algorithm is the following:for every vertex $i$,it has a weight $l(i)$ and every edge is a coupling of the vertices $i,j$,it meets the condition:$w(i,j) \leq l(i)+l(j)$.Every perfect minimum weight matching,the sum of the weight edge is:
+
 \begin{center}
 \begin{align*}
     \text{val}(M) &= \sum_{(u,v)\in M}w(u,v) \\
@@ -301,11 +300,11 @@ The implementation of the algorithm is the following:for every vertex $i$,it has
 \end{center}
 Defining $z_u$ as the vertex labeling of $u$, and we also define $e(u,v)$ an equality edge if $(z_u+z_v=weight(e))$, and at this time the edge labeling of edge is called $z_e$. It requires $z_e=z_u+z_v-weight(e)=0$.
 The augmenting path composed of "equality edges" is continuously expanded, and since all the edges used for expansion are "equality edges", the final maximum weight perfect matching obtained is still all "equality edges".
-In Figure 7, we demonstrate the whole process of this algorithm in detail. It consists of four steps \cite{10}:
+In Figure 6, we demonstrate the whole process of this algorithm in detail. It consists of four steps \cite{10}:
 \begin{enumerate}
-    \item \textbf{Grow}: If edge $(u,v)$ is tight, $l(u) = + $and $l(v) = \emptyset$ then the tree to which $u$ belongs can be "grown" by acquiring node $u$ and the corresponding matched node, as shown in the Figure 7(a)
-    \item \textbf{Augment}: If edge $(u,v) $ is tight, $l(u) = l(v) = + $ and $u,v$ belong to different trees then the cardinality of matching $x$ can be increased by "flipping" variable $x_e$ for edges $e$ along the path connecting the roots of the two trees, as shown in Figure 7(b). All nodes in the trees become free.
-    \item \textbf{Shrink}: If edge $(u,v) $ is tight, $l(u) = l(v) = + $ and $u,v$ belong to the same tree then there is cycle of odd length that can be shrunk to a blossom, as shown in Figure 7(c). The dual variable for this new blossom is set to 0.
+    \item \textbf{Grow}: If edge $(u,v)$ is tight, $l(u) = + $and $l(v) = \emptyset$ then the tree to which $u$ belongs can be "grown" by acquiring node $u$ and the corresponding matched node, as shown in the Figure 6(a)
+    \item \textbf{Augment}: If edge $(u,v) $ is tight, $l(u) = l(v) = + $ and $u,v$ belong to different trees then the cardinality of matching $x$ can be increased by "flipping" variable $x_e$ for edges $e$ along the path connecting the roots of the two trees, as shown in Figure 6(b). All nodes in the trees become free.
+    \item \textbf{Shrink}: If edge $(u,v) $ is tight, $l(u) = l(v) = + $ and $u,v$ belong to the same tree then there is cycle of odd length that can be shrunk to a blossom, as shown in Figure 6(c). The dual variable for this new blossom is set to 0.
     \item \textbf{Expand}: If node $v$ is a blossom with $y_e = 0$ and $l(v) = -$ then it can be expanded(Fig.7(d)).
 \begin{figure} % Single column figure
     \setlength{\abovecaptionskip}{0.cm} %调整标题上方的距离   
@@ -327,40 +326,22 @@ In Figure 7, we demonstrate the whole process of this algorithm in detail. It co
 \end{enumerate}
 
 \section{\Rmnum{5}. Test and result}
+
 There is two critical parameter to evaluate the performance of a decoder:the error threshold and the time complexity.
 
-However, One pitfall about test set of surface code is the usage of noisy model.
+
+However, one pitfall about test set of surface code is the usage of noisy model.
 Though depolarizing noise model is the best one to simulate the real condition, 
 most of the test program just generate only bit-flip errors to test the decoder.
 So in \ref{fig:errorate2} we translate osur physical error rate
 to the unit of commonly used one.
 
-\begin{figure}[htbp] % Single column figure 
-    \centering %使图片居中显示
-    \vspace{0cm} %调整图片与上文的垂直距离  
-    \setlength{\abovecaptionskip}{0.cm} %调整标题上方的距离   
-    \setlength{\belowcaptionskip}{0.cm} %调整标题下方的距离  
-    \setlength{\belowdisplayskip}{3pt} %调整标题与下文的距离
-    \begin{subfigure}[b]{0.9\linewidth}
-        \includegraphics[width=\linewidth]{img/errorThres.png}
-        \caption{}
-        \label{fig:errorrate1}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.9\linewidth}
-        \includegraphics[width=\linewidth]{img/errorThres2.png}
-        \caption{Error threshold of different decoders. (b) is more precise than (a) and use a more common unit.}
-        \label{fig:errorate2}
-    \end{subfigure}
-    \caption{}
-    \end{figure}
 
 
     In this part, we will show our results and compare different decoders with their error threshold and time complexity. You can see more details in our github website, here, we just give a brief introduction.
     The error threshold is a critical parameter in the design and implementation of fault-tolerant quantum computation. It is related to the threshold theorem, which states that arbitrarily long quantum computations are reliable below a specific error rate that varies with the quantum decoders we use. Above the specific error rate, the reliability of the quantum computation rapidly deteriorates, making it impossible to conduct a fault-tolerant quantum computation.
-    Figure 8(a)-(b) shows the logical error rate varying with the phase-flip and bit-flip error rate under the noise model respectively. For four different scale quantum memories, we set up 25 different groups of error rates, each group of error rates for 500 simulation tests, and calculate the logic error rate. We can calculate the error threshold by recording the intersection of four lines. And it shows the error threshold is about 0.104. 
+    Figure 7(a)-(b) shows the logical error rate varying with the phase-flip and bit-flip error rate under the noise model respectively. For four different scale quantum memories, we set up 25 different groups of error rates, each group of error rates for 500 simulation tests, and calculate the logic error rate. We can calculate the error threshold by recording the intersection of four lines. And it shows the error threshold is about 0.104. 
     
-
     For time complexity, we find our implementation using Blossom V very slow.
     Though we use local dijksra to build syndrome graph (see in Pymatching refer papers) ,
     which set a parameter M, and defects node will stop connecting with other nodes when its degree is larger than M.
@@ -369,10 +350,29 @@ to the unit of commonly used one.
     Luckily, in 2023 , Pymatching2.0, the new library use "sparse blossom algorithm", which has an amortize time of $O(n)$ and high accuracy.
 
     The comparison of time tested by us is shown in \ref{fig:time1} and \ref{fig:time2}. 
-    
     \begin{figure}[htbp] % Single column figure 
         \centering %使图片居中显示
         \vspace{0cm} %调整图片与上文的垂直距离  
+        \setlength{\abovecaptionskip}{0.cm} %调整标题上方的距离   
+        \setlength{\belowcaptionskip}{0.cm} %调整标题下方的距离  
+        \setlength{\belowdisplayskip}{3pt} %调整标题与下文的距离
+        \begin{subfigure}[b]{0.9\linewidth}
+            \includegraphics[width=\linewidth]{img/errorThres.png}
+            \caption{}
+            \label{fig:errorrate1}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.9\linewidth}
+            \includegraphics[width=\linewidth]{img/errorThres2.png}
+            \caption{}
+            \label{fig:errorate2}
+        \end{subfigure}
+        \caption{}
+        \end{figure}
+
+    \begin{figure}[htbp] % Single column figure 
+        \centering %使图片居中显示
+        \vspace{-1.1cm} %调整图片与上文的垂直距离  
         \setlength{\abovecaptionskip}{0.cm} %调整标题上方的距离   
         \setlength{\belowcaptionskip}{0.cm} %调整标题下方的距离  
         \setlength{\belowdisplayskip}{3pt} %调整标题与下文的距离
@@ -408,14 +408,17 @@ to the unit of commonly used one.
     \end{tabular}
     \end{adjustbox}
 \end{table}
-
-
 \section{\Rmnum{6}. Conclusion}
+\subsection{A. Our achievement}
+Our research has successfully implemented the Blossom Algorithm and reproduced the Minimum Weight Perfect Matching (MWPM) algorithm, exploring their roles in quantum error correction. We assessed key performance index, especially the error threshold and time complexity, across a series of modern decoders.
+\subsection{B. Outlook}
+Our findings highlight the Blossom Algorithm's robust error threshold, a significant advantage for quantum computing applications. Despite its time complexity not being as competitive, this advantage clearly sets it apart.
+Through comparative analysis, we've identified performance trade-offs among decoders. The ideal decoder—one that excels in error threshold, time consuming, and logical error rate—remains an aspirational goal. We anticipate that future breakthroughs will deliver a decoder with exceptional performance on all fronts, therefore, greatly enhancing the potential of quantum computing. Or we can expect to see the emergence of different decoding methods or joint application of multiple decoders in practical quantum computing under different circumstances.
 
 %----------------------------------------------------------------------------------------
 %    REFERENCES
 %----------------------------------------------------------------------------------------
-\printbibliography
+
 %-------------------{}---{}------------------------------------------------------------------
 
 \end{document}
