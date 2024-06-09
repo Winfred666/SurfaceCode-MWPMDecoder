@@ -1,6 +1,11 @@
 code/data/input/*
 code/data/output/*
 
+article/
+
+report&PPT/
+
+
 !code/data/input/README.md
 # Byte-compiled / optimized / DLL files
 __pycache__/
