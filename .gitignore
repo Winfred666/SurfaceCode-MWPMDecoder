@@ -1,10 +1,8 @@
 code/data/input/*
 code/data/output/*
 
-article/
-
 report&PPT/
-
+article/
 
 !code/data/input/README.md
 # Byte-compiled / optimized / DLL files
